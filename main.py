@@ -13,3 +13,17 @@ print(names)
 
 observations = pd.read_csv('./datas/sonar.all-data.csv', names=names)
 print(observations.head())
+# pour enlever la limite d'affichage de colonnes de pandas
+pd.set_option('display.max_columns',None)
+# print(observations.head(5))
+
+# changer la colonne OBJET en valeurs rocher = 0, mine = 1
+observations['OBJET'] = (observations['OBJET'] == 'M').astype(int)
+
+# Manque t'il des infos?
+print(observations.info())
+
+# column objet
+print(observations.groupby(by='OBJET').size())
+
+print(observations.describe())
