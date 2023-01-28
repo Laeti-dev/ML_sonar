@@ -27,3 +27,22 @@ print(observations.info())
 print(observations.groupby(by='OBJET').size())
 
 print(observations.describe())
+
+# importer le fichier JMPStatistiques pour utiliser les fonctions stats
+import JMPStatistiques as jmp
+stats = jmp.JMPStatistiques(observations['F1'])
+stats.analyseFeature()
+
+# Utilisation de matplotlib pour visualiser toutes nos mesures
+from matplotlib import pyplot as plt
+observations.plot.box(figsize=(10,10), xticks=[]) #pour ne pas afficher les x
+
+plt.title('Détection des valeurs extrêmes')
+plt.xlabel('Les 60 fréquences')
+plt.ylabel('Puissance du signal')
+plt.show()
+
+# Nous remarquons que de nombreuses mesures présentent des valeurs abérrentes
+# Pouvant entrainer de mauvaises prédictions il faut les traiter sans nécessairement les retirer
+
+# D'abord, choisissons le modèle
