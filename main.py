@@ -104,4 +104,28 @@ predictions = svm.predict(X_VALIDATION)
 print(f'SVM:{str(accuracy_score(predictions, Y_VALIDAITON))}')
 # Trouver l'hyperparametre C
 from sklearn.model_selection import GridSearchCV
-# Défini une plage de valeurs à tester
+# Définir une plage de valeurs à tester allant de 1 à 100 (1 étant la valeur par défaut de l'hyperparamètre
+# C utilisé par l'algorithme SVC
+penalite = [{'C': range(1,100)}]
+
+# Tests avec 5 échantillons de Validations Croisées
+# L'algorithme GridSearchCV prend les paramètres suivantd :
+# - l'algorithme à tester
+# - les hyperparamètres à optimiser
+# - le nombre de validations croisées = définir en combien de groupe séparer nos données,
+# déterminer une optimisation sur les premiers groupes et les tester sur le dernier
+recherche_optimisation = GridSearchCV(SVC(), penalite, cv=5)
+recherche_optimisation.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+print(f'Le meilleur paramètre est {recherche_optimisation.best_params_}')
+# Optimisation du SVM
+svm = SVC(C=35, gamma='auto')
+svm.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = svm.predict(X_VALIDATION)
+print(f'SVM:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+# 6- GRADIENT BOOSTING
+from sklearn.ensemble import GradientBoostingClassifier
+gradientBoosting = GradientBoostingClassifier()
+gradientBoosting.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = gradientBoosting.predict(X_VALIDATION)
+print(f'Gradient Boosting:{str(accuracy_score(predictions, Y_VALIDAITON))}')
