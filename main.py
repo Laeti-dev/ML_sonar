@@ -129,3 +129,47 @@ gradientBoosting = GradientBoostingClassifier()
 gradientBoosting.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
 predictions = gradientBoosting.predict(X_VALIDATION)
 print(f'Gradient Boosting:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+# Gestion des valeurs extrêmes
+# en supprimant les ligne > ou < 1,5 fois la valeur de leur interquartile
+# 1- Pour chaque caractéristique, on cherche les numéros de ligne correspondant à une donnée exttrême
+import numpy as np
+# Créer une liste chargée de contenir ces numéros de lignes
+num_lignes = []
+# Itérer sur les 60 features
+for feature in observations.columns.tolist():
+    # Calcul des percentiles
+    Q1 = np.percentile(observations[feature], 25)
+    Q3 = np.percentile(observations[feature], 75)
+    # Définition de la borne
+    extremes = 1.5*(Q3-Q1)
+    # Créer une liste des index de lignes de données extrêmes
+    liste_donnees_extremes = observations[(observations[feature]<Q1-extremes) |
+                                          (observations[feature]>Q3+extremes)].index
+    # Les ajouter à notre liste
+    num_lignes.extend(liste_donnees_extremes)
+
+    # Trie cette liste par ordre croissant
+    num_lignes.sort()
+
+    # Créer une liste contenant les numéros de lignes à supprimer
+    to_delete = []
+
+    # Itérer sur la liste de numéros de lignes
+    for ligne in num_lignes:
+        # Récupérer son numéro
+        numero = ligne
+        # Compter le nombre de fois que ce numéro de ligne apparait dans l'ensemble des numéros de ligne
+        nb_val_extremes = num_lignes.count(numero)
+        # Si ce compte est > 7 alors on ajoute ce numéro à la liste à supprimer
+        if (nb_val_extremes > 7):
+            to_delete.append(numero)
+    # Supprimer les doublons
+    to_delete = list(set(to_delete))
+
+# suprimer ces lignes du DF
+
+print(to_delete)
+print(f'À supprimer: {len(to_delete)}')
+observations.drop(to_delete, axis=0)
+
