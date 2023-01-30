@@ -173,3 +173,60 @@ print(to_delete)
 print(f'À supprimer: {len(to_delete)}')
 observations.drop(to_delete, axis=0)
 
+# Suppression des erreurs de type warning
+import warnings
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+# 1- REGRESSION LOGISTIQUE
+regression_logistique = LogisticRegression()
+regression_logistique.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = regression_logistique.predict(X_VALIDATION)
+print(f'logistic regression:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+#  2- ARBRE DE DECISION
+from sklearn.tree import DecisionTreeClassifier
+decision_tree = DecisionTreeClassifier()
+decision_tree.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = decision_tree.predict(X_VALIDATION)
+print(f'Decision tree:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+# 3- RANDOM FOREST
+from sklearn.ensemble import RandomForestClassifier
+random_forest = RandomForestClassifier()
+random_forest.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = random_forest.predict(X_VALIDATION)
+print(f'Random Forest:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+# 4- K-NEAREST NEIGHBOR
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier()
+knn.fit(X_APPRENTISSAGE,Y_APPRENTISSAGE)
+predictions = knn.predict(X_VALIDATION)
+print(f'KNN:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+
+# 5- Support Vector Machine
+from sklearn.svm import SVC
+svm = SVC(gamma='auto')
+svm.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = svm.predict(X_VALIDATION)
+print(f'SVM:{str(accuracy_score(predictions, Y_VALIDAITON))}')
+# Trouver l'hyperparametre C
+from sklearn.model_selection import GridSearchCV
+# Définir une plage de valeurs à tester allant de 1 à 100 (1 étant la valeur par défaut de l'hyperparamètre
+# C utilisé par l'algorithme SVC
+penalite = [{'C': range(1,100)}]
+
+# Tests avec 5 échantillons de Validations Croisées
+# L'algorithme GridSearchCV prend les paramètres suivantd :
+# - l'algorithme à tester
+# - les hyperparamètres à optimiser
+# - le nombre de validations croisées = définir en combien de groupe séparer nos données,
+# déterminer une optimisation sur les premiers groupes et les tester sur le dernier
+recherche_optimisation = GridSearchCV(SVC(), penalite, cv=5)
+recherche_optimisation.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+print(f'Le meilleur paramètre est {recherche_optimisation.best_params_}')
+# Optimisation du SVM
+svm = SVC(C=35, gamma='auto')
+svm.fit(X_APPRENTISSAGE, Y_APPRENTISSAGE)
+predictions = svm.predict(X_VALIDATION)
+print(f'SVM:{str(accuracy_score(predictions, Y_VALIDAITON))}')
